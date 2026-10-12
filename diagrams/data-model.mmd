@@ -1,0 +1,31 @@
+erDiagram
+    USER {
+        string id PK
+        string username UK
+        enum role "ADMIN or EMPLOYEE"
+    }
+    SETTING {
+        int id PK "singleton row"
+        int next_bill_no
+        bool fifo_initialized
+        bool fifo_initializing
+    }
+    SUPPLIER ||--o{ PURCHASE : supplies
+    PURCHASE ||--|{ PURCHASE_ITEM : contains
+    PRODUCT ||--o{ PURCHASE_ITEM : "bought as"
+    SALE ||--|{ SALE_ITEM : contains
+    PRODUCT ||--o{ SALE_ITEM : "sold as"
+    PRODUCT ||--o{ STOCK_ADJUSTMENT : adjusted
+    PRODUCT ||--o{ INVENTORY_LAYER : "stock batches"
+    PURCHASE_ITEM |o--o| INVENTORY_LAYER : creates
+    STOCK_ADJUSTMENT |o--o| INVENTORY_LAYER : "creates (positive)"
+    INVENTORY_LAYER ||--o{ FIFO_CONSUMPTION : "consumed by"
+    SALE_ITEM ||--o{ FIFO_CONSUMPTION : "cost trail"
+    SALE ||--o{ CUSTOMER_RETURN : "returned via"
+    CUSTOMER_RETURN ||--|{ CUSTOMER_RETURN_ITEM : contains
+    SALE_ITEM ||--o{ CUSTOMER_RETURN_ITEM : "returned line"
+    CUSTOMER_RETURN_ITEM |o--o| INVENTORY_LAYER : "creates"
+    SUPPLIER ||--o{ SUPPLIER_RETURN : receives
+    SUPPLIER_RETURN ||--|{ SUPPLIER_RETURN_ITEM : contains
+    SUPPLIER_RETURN_ITEM ||--o{ FIFO_CONSUMPTION : "cost trail"
+    STOCK_ADJUSTMENT ||--o{ FIFO_CONSUMPTION : "cost trail (negative)"

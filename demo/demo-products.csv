@@ -1,0 +1,11 @@
+sku,productName,currentPurchasePrice,currentSellingPrice,currentStock
+DEMO-SC-001,Demo Seat Cover - Sedan Black,400,800,10
+DEMO-FM-002,Demo Floor Mat Set - Universal,350,650,25
+DEMO-DC-003,Demo Dash Camera 1080p,2200,3499,6
+DEMO-HP-004,Demo Phone Holder - Vent Clip,90,199,40
+DEMO-SW-005,Demo Steering Wheel Cover - Leather,280,549,18
+DEMO-LB-006,Demo LED Headlight Bulb H4 (Pair),650,1199,4
+DEMO-AF-007,Demo Car Air Freshener - Gel,25,60,120
+DEMO-CH-008,Demo Dual USB Car Charger,180,399,0
+DEMO-WP-009,Demo Wiper Blade 20in,120,250,12
+DEMO-TC-010,Demo Tyre Inflator 12V,1400,2299,3

@@ -1,0 +1,16 @@
+flowchart TD
+    A["Legacy desktop system<br/>SQL Server database"] --> B["Schema snapshot export<br/>tables, columns, keys, indexes,<br/>duplicate reports, sample rows"]
+    B --> C["Mapping decisions<br/>(which tables migrate, which are excluded)"]
+    A --> D["ETL script (TypeScript)<br/>reads 7 legacy tables"]
+    C --> D
+    D --> E{"Pre-flight validation (both modes)<br/>duplicate keys, orphan references,<br/>next bill number continuity"}
+    E -->|"fail"| F["Abort, nothing written"]
+    E -->|"pass, dry run"| G["Assert expected row counts<br/>write report only, no writes"]
+    E -->|"pass, live run"| H["Single PostgreSQL transaction<br/>upsert parents by legacy ID,<br/>replace line items per parent"]
+    H --> I{"Post-import verification<br/>row counts and stock total<br/>inside the same transaction"}
+    I -->|"mismatch"| J["Transaction rolls back"]
+    I -->|"match"| K["Commit and write migration report"]
+    K --> L["Local PostgreSQL"]
+    L --> M["Dump and restore to hosted PostgreSQL"]
+    M --> N["Prisma migration history established<br/>with prisma migrate deploy"]
+    N --> O["Later: FIFO initialization<br/>opening layers from current stock"]

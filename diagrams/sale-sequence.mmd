@@ -1,0 +1,29 @@
+sequenceDiagram
+    autonumber
+    actor Admin as Admin user
+    participant UI as Bill form (browser)
+    participant API as POST /api/sales
+    participant Data as createSale (data layer)
+    participant PG as PostgreSQL
+
+    Admin->>UI: Add lines, discount, service charge, Save
+    UI->>API: JSON payload
+    API->>API: requireApiAdmin (session + role)
+    API->>Data: createSale(payload)
+    Data->>Data: Zod parse (quantities, prices, text limits)
+    Data->>PG: BEGIN
+    Data->>PG: Load products, check stock per product
+    Data->>PG: SELECT settings row FOR UPDATE (stock-mutation lock)
+    Data->>PG: Increment next bill number (atomic)
+    Data->>PG: INSERT sale header (rounded totals)
+    loop each sale line
+        Data->>PG: SELECT active layers FOR UPDATE, oldest first
+        Data->>Data: Allocate quantity across layers (pure function)
+        Data->>PG: Decrement layer remaining quantities
+        Data->>PG: INSERT sale item with cost and profit snapshot
+        Data->>PG: INSERT one consumption row per layer touched
+    end
+    Data->>PG: Decrement product current stock
+    Data->>PG: COMMIT
+    API-->>UI: 201 with sale
+    Note over API,UI: insufficient stock maps to 409,<br/>invalid input maps to 400

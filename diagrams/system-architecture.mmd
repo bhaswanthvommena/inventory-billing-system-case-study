@@ -1,0 +1,25 @@
+flowchart LR
+    subgraph Client["Browser (desktop and mobile)"]
+        UI["React 19 UI<br/>server-rendered pages + client forms"]
+    end
+
+    subgraph App["Next.js 15 application (App Router, single deployable)"]
+        Pages["Page guards<br/>requireAdmin / requirePermission"]
+        Routes["Route handlers under /api<br/>requireApiAdmin / requireApiPermission"]
+        Features["Feature data layer<br/>Zod validation + Prisma transactions"]
+        Domain["Domain modules<br/>FIFO costing, returns rules,<br/>diagnostics, search"]
+        Auth["Auth module<br/>JWT session cookie + DB user lookup"]
+    end
+
+    DB[("PostgreSQL<br/>via Prisma 6")]
+
+    UI -->|"page navigation"| Pages
+    UI -->|"fetch JSON"| Routes
+    Pages --> Auth
+    Routes --> Auth
+    Auth -->|"load user and role per request"| DB
+    Pages --> Features
+    Routes --> Features
+    Features --> Domain
+    Features -->|"interactive transactions"| DB
+    Domain -->|"SELECT ... FOR UPDATE<br/>(raw SQL, FIFO layers and settings row)"| DB

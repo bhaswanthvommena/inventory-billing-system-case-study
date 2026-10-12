@@ -1,0 +1,39 @@
+# Secrets and environment files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Database dumps and backups
+*.sql
+*.dump
+*.bak
+*.backup
+*.sqlite
+*.db
+
+# Data files (only the fictional demo CSV is allowed)
+*.csv
+!demo/demo-products.csv
+*.xlsx
+*.xls
+migration-report.json
+
+# Application source and build output must never land in this repository
+node_modules/
+.next/
+dist/
+build/
+coverage/
+*.tsbuildinfo
+*.ts
+*.tsx
+!.gitkeep
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log

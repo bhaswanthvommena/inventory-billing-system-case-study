@@ -1,0 +1,12 @@
+flowchart TD
+    A["Deploy FIFO-capable code and migrations<br/>(engine inactive: fifo_initialized = false)"] --> B["Verify app health and diagnostics tables exist"]
+    B --> C["Admin triggers Initialize FIFO"]
+    C --> D["BEGIN transaction<br/>lock settings row FOR UPDATE<br/>set fifo_initializing = true"]
+    D --> E{"Pre-flight checks<br/>no negative stock, valid costs,<br/>no duplicate opening layers"}
+    E -->|"fail"| R["Rollback: nothing changed<br/>report lists failing products"]
+    E -->|"pass"| F["Create one opening layer per product<br/>with stock greater than zero<br/>(cost = current purchase price)"]
+    F --> G{"Post-checks<br/>layer remaining sum equals<br/>product stock for every product"}
+    G -->|"fail"| R
+    G -->|"pass"| H["Set fifo_initialized = true<br/>clear fifo_initializing, COMMIT"]
+    H --> I["Direct stock edits now rejected;<br/>stock moves only via purchases, sales,<br/>returns, adjustments, imports"]
+    I --> J["FIFO Diagnostics page<br/>scan and safe reconciliation"]
